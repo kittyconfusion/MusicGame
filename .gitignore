@@ -1,5 +1,6 @@
 *.vsconfig
 *.sln
+*.csproj
 .vs/*
 Build/*
 Library/*
