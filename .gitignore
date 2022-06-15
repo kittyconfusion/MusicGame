@@ -2,6 +2,7 @@
 *.sln
 *.csproj
 .vs/*
+.idea/*
 Build/*
 Library/*
 Temp/*
