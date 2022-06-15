@@ -273,9 +273,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minZoom: 7
-  maxZoom: 10
-  speedThreshold: 9
-  smoothness: 1.5
+  maxZoom: 9.5
+  speedThreshold: 15
+  smooothness: 0.5
   followBody: {fileID: 907287239}
 --- !u!1 &619394800
 GameObject:
