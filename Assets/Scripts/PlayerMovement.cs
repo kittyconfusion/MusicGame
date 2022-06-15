@@ -1,3 +1,5 @@
+using System;
+using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -5,9 +7,11 @@ public class PlayerMovement : MonoBehaviour
 {
     
     public float walkingSpeed = 5;
+    public float horizontalDrag = 0.1f;
     public float walkSmoothing = 0.2f;
     public float jumpHeight = 2.5f;
     public int numAirJumps = 1;
+    public int wallJumpXForce = 10;
 
     public Transform groundCheckPos;
     public Transform wallCheckLeftPos;
@@ -109,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (_canJump && _isSliding && !_isGrounded)
             {
-                velocity.x = 12 * (_isSlidingRight ? -1 : 1);
+                velocity.x += wallJumpXForce * (_isSlidingRight ? -1 : 1);
                 velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * jumpHeight);
             }
 
@@ -130,7 +134,9 @@ public class PlayerMovement : MonoBehaviour
     
     private void HandleMoveHorizontal(ref Vector2 velocity)
     {
-        var horizontal = _directionalInput.x;
-        velocity.x = Vector2.SmoothDamp(velocity,new Vector2(horizontal * walkingSpeed,velocity.y),ref _horizontalAcceleration,walkSmoothing).x;
+        velocity.x *= 1-horizontalDrag;
+        var inputMovement = _directionalInput.x * walkingSpeed;
+        float targetMovement = inputMovement * velocity.x > 0 ? (Math.Abs(inputMovement) >= Math.Abs(velocity.x) ? inputMovement : velocity.x) : (velocity.x + inputMovement);
+        velocity.x = Vector2.SmoothDamp(velocity,new Vector2(targetMovement,velocity.y),ref _horizontalAcceleration,walkSmoothing).x;
     }
 }
