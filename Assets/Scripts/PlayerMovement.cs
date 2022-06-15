@@ -3,8 +3,9 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     
-    public float walkingSpeed;
-    public float jumpHeight;
+    public float walkingSpeed = 5;
+    public float walkSmoothing = 0.2f;
+    public float jumpHeight = 2.5f;
     public int numAirJumps = 1;
 
     public Transform groundCheckPos;
@@ -14,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _rigidbody;
 
     private Vector2 _directionalInput;
+    private Vector2 _horizontalAcceleration = Vector2.zero;
 
     private bool _jumpPressed;
     private int _remainingAirJumps;
@@ -75,6 +77,6 @@ public class PlayerMovement : MonoBehaviour
     private void HandleMoveHorizontal(ref Vector2 velocity)
     {
         var horizontal = _directionalInput.x;
-        velocity.x = horizontal * walkingSpeed;
+        velocity.x = Vector2.SmoothDamp(velocity,new Vector2(horizontal * walkingSpeed,velocity.y),ref _horizontalAcceleration,walkSmoothing).x;
     }
 }

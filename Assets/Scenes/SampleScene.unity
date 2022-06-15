@@ -272,10 +272,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74098e2b73d2111469bd7c426ae53f9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 1
   minZoom: 7
-  maxZoom: 9
-  smooothness: 0.5
+  maxZoom: 10
+  speedThreshold: 9
+  smoothness: 1.5
   followBody: {fileID: 907287239}
 --- !u!1 &619394800
 GameObject:
@@ -465,6 +465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkingSpeed: 5
+  walkSmoothing: 0.05
   jumpHeight: 2.5
   numAirJumps: 1
   groundCheckPos: {fileID: 1448532718}
