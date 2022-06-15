@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -22,9 +23,12 @@ public class PlayerMovement : MonoBehaviour
     private bool _canJump;
     private bool _isGrounded;
 
+    private float _gravity;
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+        _gravity = _rigidbody.gravityScale;
     }
 
     void Update()
@@ -43,8 +47,26 @@ public class PlayerMovement : MonoBehaviour
 
         CheckGrounded();
         HandleJump(ref velocity);
+
+        HandleGravity();
         
         _rigidbody.velocity = velocity;
+    }
+    
+    // Sets gravity to 0 whilst on ground as to not slide down ramps and remove friction (handled separately).
+    private void HandleGravity()
+    {
+        _gravity = _rigidbody.gravityScale > 0 ? _rigidbody.gravityScale : _gravity;
+
+        if (!_isGrounded && _rigidbody.gravityScale == 0)
+        {
+            _rigidbody.gravityScale = _gravity;
+        }
+        
+        if (_isGrounded && _rigidbody.gravityScale > 0)
+        {
+            _rigidbody.gravityScale = 0;
+        }
     }
 
     private void CheckGrounded()
@@ -62,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (_canJump && (_isGrounded || _remainingAirJumps > 0))
             {
-                velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _rigidbody.gravityScale * jumpHeight);
+                velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * jumpHeight);
                 if (!_isGrounded) {_remainingAirJumps--;}
                 _isGrounded = false;
             }
