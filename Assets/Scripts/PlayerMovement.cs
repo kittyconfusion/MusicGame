@@ -10,8 +10,11 @@ public class PlayerMovement : MonoBehaviour
     public int numAirJumps = 1;
 
     public Transform groundCheckPos;
+    public Transform wallCheckLeftPos;
+    public Transform wallCheckRightPos;
     public LayerMask groundLayers;
-    private Vector2 groundCheckSize = new(0.37f,0.05f);
+    private Vector2 groundCheckSize = new(0.37f, 0.05f);
+    private Vector2 wallCheckSize = new(0.05f, 0.55f);
 
     private Rigidbody2D _rigidbody;
 
@@ -22,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
     private int _remainingAirJumps;
     private bool _canJump;
     private bool _isGrounded;
+    private bool _isSliding;
+    private bool _isSlidingRight;
 
     private float _gravity;
 
@@ -46,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
         HandleMoveHorizontal(ref velocity);
 
         CheckGrounded();
+        CheckWallSliding();
         HandleJump(ref velocity);
 
         HandleGravity();
@@ -71,7 +77,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckGrounded()
     {
-        _isGrounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0,groundLayers);
+        _isGrounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0, groundLayers);
+    }
+
+    private void CheckWallSliding()
+    {
+        if (Physics2D.OverlapBox(wallCheckLeftPos.position,wallCheckSize, 0, groundLayers) && _directionalInput.x < 0)
+        {
+            _isSliding = true;
+            _isSlidingRight = false;
+        }
+        else if (Physics2D.OverlapBox(wallCheckRightPos.position, wallCheckSize, 0, groundLayers) && _directionalInput.x > 0)
+        {
+            _isSliding = true;
+            _isSlidingRight = true;
+        }
+        else
+        {
+            _isSliding = false;
+        }
+
     }
 
     private void HandleJump(ref Vector2 velocity)
@@ -82,12 +107,19 @@ public class PlayerMovement : MonoBehaviour
         }
         if (_jumpPressed)
         {
-            if (_canJump && (_isGrounded || _remainingAirJumps > 0))
+            if (_canJump && _isSliding && !_isGrounded)
+            {
+                velocity.x = 12 * (_isSlidingRight ? -1 : 1);
+                velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * jumpHeight);
+            }
+
+            else if (_canJump && (_isGrounded || _remainingAirJumps > 0))
             {
                 velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * jumpHeight);
                 if (!_isGrounded) {_remainingAirJumps--;}
                 _isGrounded = false;
             }
+            
             _canJump = false;
         }
         else

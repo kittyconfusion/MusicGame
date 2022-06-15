@@ -6,9 +6,9 @@ public class OrthographicZoom : MonoBehaviour
     public float minZoom = 7;
     public float maxZoom = 9;
     public float speedThreshold = 7.5f;
-    public float smoothness = 0.5f;
+    public float smooothness = 0.5f;
     public Rigidbody2D followBody;
-    private float _zoomSpeed = 0;
+    private float _zooooomSpeed = 0;
 
     private void Awake()
     {
@@ -18,7 +18,7 @@ public class OrthographicZoom : MonoBehaviour
     void Update()
     {
         var targetZoom = minZoom + (maxZoom - minZoom) / (1 + Mathf.Exp(-0.5f * (followBody.velocity.magnitude - speedThreshold)));
-        float newSize = Mathf.SmoothDamp(_cam.orthographicSize, targetZoom, ref _zoomSpeed, smoothness, Mathf.Infinity,(targetZoom < _cam.orthographicSize ? 2 : 1) * Time.deltaTime);
+        float newSize = Mathf.SmoothDamp(_cam.orthographicSize, targetZoom, ref _zooooomSpeed, smooothness, Mathf.Infinity,(targetZoom < _cam.orthographicSize ? 2 : 1) * Time.deltaTime);
         _cam.orthographicSize = newSize;
     }
 }
