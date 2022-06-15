@@ -3,12 +3,12 @@ using UnityEngine;
 public class OrthographicZoom : MonoBehaviour
 {
     private Camera _cam;
-    public float sensitivity = 0.5f;
     public float minZoom = 7;
     public float maxZoom = 9;
-    public float smooothness = 0.5f;
+    public float speedThreshold = 7.5f;
+    public float smoothness = 0.5f;
     public Rigidbody2D followBody;
-    private float _zoooomSpeed = 0;
+    private float _zoomSpeed = 0;
 
     private void Awake()
     {
@@ -17,9 +17,8 @@ public class OrthographicZoom : MonoBehaviour
 
     void Update()
     {
-        var targetZoom = followBody.velocity.magnitude * sensitivity;
-        targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
-        float newSize = Mathf.SmoothDamp(_cam.orthographicSize, targetZoom, ref _zoooomSpeed, smooothness);
+        var targetZoom = minZoom + (maxZoom - minZoom) / (1 + Mathf.Exp(-0.5f * (followBody.velocity.magnitude - speedThreshold)));
+        float newSize = Mathf.SmoothDamp(_cam.orthographicSize, targetZoom, ref _zoomSpeed, smoothness, Mathf.Infinity,(targetZoom < _cam.orthographicSize ? 2 : 1) * Time.deltaTime);
         _cam.orthographicSize = newSize;
     }
 }
