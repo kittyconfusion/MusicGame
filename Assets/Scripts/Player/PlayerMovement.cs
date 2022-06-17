@@ -15,6 +15,10 @@ namespace Player
         public int numAirJumps = 1;
         public int wallJumpXForce = 10;
 
+        public int coyoteTicks = 5;
+        public int jumpBufferTicks = 5;
+        public int _jumpBuffer = 0;
+
         public Transform groundCheckPos;
         public Transform wallCheckLeftPos;
         public Transform wallCheckRightPos;
@@ -108,10 +112,28 @@ namespace Player
 
         private void HandleJump(ref Vector2 velocity)
         {
+
             if (_isGrounded)
             {
                 _remainingAirJumps = numAirJumps;
             }
+
+            if (!_isGrounded && _remainingAirJumps == 0 && _jumpPressed && !_wasJumpPressed)
+            {
+                _jumpBuffer = jumpBufferTicks;
+                
+            }
+            if (_jumpBuffer > 0)
+            {
+                if (_isGrounded || _isSliding)
+                {
+                    _jumpPressed = true;
+                    _jumpBuffer = 0;
+                }
+                _wasJumpPressed = false;
+                _jumpBuffer--;
+            }
+
             if (_jumpPressed)
             {
                 var toJump = false;
