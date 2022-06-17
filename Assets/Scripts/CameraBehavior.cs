@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraBehavior : MonoBehaviour
@@ -25,8 +26,8 @@ public class CameraBehavior : MonoBehaviour
 
         bool hitvertical = false;
         bool hithorizontal = false;
-
-        CameraCollision(ref targetPosition, ref hitvertical, ref hithorizontal);
+        
+        CameraCollision(player.position, ref targetPosition, ref hitvertical, ref hithorizontal);
 
         position = Vector3.SmoothDamp(position, targetPosition, ref _velocity, movementSmoothing, maxFollowSpeed);
         if (!(hitvertical || hithorizontal))
@@ -37,34 +38,50 @@ public class CameraBehavior : MonoBehaviour
         transform.position = position;
     }
 
-    private void CameraCollision(ref Vector3 position, ref bool hitvertical, ref bool hithorizontal)
+    private void CameraCollision(Vector3 playerPosition, ref Vector3 targetPosition, ref bool hitvertical, ref bool hithorizontal)
     {
 
-
-        RaycastHit2D hitup = Physics2D.Raycast(position, Vector2.up, _cam.orthographicSize, _layermask);
-        RaycastHit2D hitdown = Physics2D.Raycast(position, Vector2.down, _cam.orthographicSize, _layermask);
-        RaycastHit2D hitleft = Physics2D.Raycast(position, Vector2.left, _cam.orthographicSize * _cam.aspect, _layermask);
-        RaycastHit2D hitright = Physics2D.Raycast(position, Vector2.right, _cam.orthographicSize * _cam.aspect, _layermask);
-
-        if (hitup.collider != null)
+        var centerHit = Physics2D.Linecast(playerPosition,targetPosition,_layermask);
+        Vector2 newTarget = targetPosition;
+        if (centerHit.collider && centerHit.collider.OverlapPoint(playerPosition))
         {
-            hitvertical = true;
-            position.y = hitup.point.y - _cam.orthographicSize;
+            newTarget = centerHit.collider.ClosestPoint(playerPosition);
+            newTarget += (newTarget-(Vector2)playerPosition).normalized * 0.1f;
         }
-        if (hitdown.collider != null)
+        else if (centerHit.collider)
         {
-            hitvertical = true;
-            position.y = hitup.point.y + _cam.orthographicSize;
+            newTarget = Vector2.Lerp(playerPosition, targetPosition,Mathf.Max(0,centerHit.fraction-0.01f));
+            
         }
-        if (hitleft.collider != null)
+        targetPosition.x = newTarget.x;
+        targetPosition.y = newTarget.y;
+
+        var hitleft = Physics2D.Raycast(targetPosition, Vector2.left, _cam.orthographicSize * _cam.aspect, _layermask);
+        var hitright = Physics2D.Raycast(targetPosition, Vector2.right, _cam.orthographicSize * _cam.aspect, _layermask);
+
+        if (hitright.collider && !hitleft.collider)
         {
             hithorizontal = true;
-            position.x = hitup.point.x + (_cam.orthographicSize * _cam.aspect);
+            targetPosition.x = hitright.point.x - (_cam.orthographicSize * _cam.aspect);
         }
-        if (hitright.collider != null)
+        else if (hitleft.collider && !hitright.collider)
         {
             hithorizontal = true;
-            position.x = hitup.point.x - (_cam.orthographicSize * _cam.aspect);
+            targetPosition.x = hitleft.point.x + (_cam.orthographicSize * _cam.aspect);
+        }
+        
+        var hitup = Physics2D.Raycast(targetPosition, Vector2.up, _cam.orthographicSize, _layermask);
+        var hitdown = Physics2D.Raycast(targetPosition, Vector2.down, _cam.orthographicSize, _layermask);
+        
+        if (hitup.collider && !hitdown.collider)
+        {
+            hitvertical = true;
+            targetPosition.y = hitup.point.y - _cam.orthographicSize;
+        }
+        else if (hitdown.collider && !hitup.collider)
+        {
+            hitvertical = true;
+            targetPosition.y = hitdown.point.y + _cam.orthographicSize;
         }
     }
 }
