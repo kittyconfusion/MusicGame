@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isSlidingRight;
 
     private float _gravity;
-
+    
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();

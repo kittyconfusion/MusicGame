@@ -169,6 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerStats: {fileID: 907287241}
   fullSprite: {fileID: 21300000, guid: eac767e26af01164b9727238f1a6dd98, type: 3}
+  previewSprite: {fileID: 21300000, guid: fa11f1ac08a25654d82a230f4e24fa4e, type: 3}
   emptySprite: {fileID: 21300000, guid: be0987bb9f5840542b48a2a862678bc4, type: 3}
   spriteSize: 25
   spacing: 4

@@ -7,7 +7,7 @@ public class PlayerStats : MonoBehaviour
     public int maxHealthStart = 50;
 
     private int _maxHealth;
-    protected int MaxHealth
+    public int MaxHealth
     {
         get => _maxHealth;
         set
@@ -22,7 +22,7 @@ public class PlayerStats : MonoBehaviour
 
     private int _health;
 
-    protected int Health
+    public int Health
     {
         get => _health;
         set => _health = Mathf.Clamp(value, 0, MaxHealth);
