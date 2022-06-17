@@ -9,7 +9,9 @@ namespace Player
         public float walkingSpeed = 5;
         public float horizontalDrag = 0.1f;
         public float walkSmoothing = 0.2f;
-        public float jumpHeight = 2.5f;
+        public float minJumpHeight = 1f;
+        public float maxJumpHeight = 2.5f;
+        public float maxJumpTime = 0.5f;
         public int numAirJumps = 1;
         public int wallJumpXForce = 10;
 
@@ -26,14 +28,15 @@ namespace Player
         private Vector2 _horizontalAcceleration = Vector2.zero;
 
         private bool _jumpPressed;
+        private float _jumpTime;
         private int _remainingAirJumps;
-        private bool _canJump;
+        private bool _wasJumpPressed;
         private bool _isGrounded;
         private bool _isSliding;
         private bool _isSlidingRight;
 
         private float _gravity;
-    
+
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
@@ -59,10 +62,10 @@ namespace Player
             HandleJump(ref velocity);
 
             HandleGravity();
-        
+            
             _rigidbody.velocity = velocity;
         }
-    
+        
         // Sets gravity to 0 whilst on ground as to not slide down ramps and remove friction (handled separately).
         private void HandleGravity()
         {
@@ -72,7 +75,7 @@ namespace Player
             {
                 _rigidbody.gravityScale = _gravity;
             }
-        
+            
             if (_isGrounded && _rigidbody.gravityScale > 0)
             {
                 _rigidbody.gravityScale = 0;
@@ -111,27 +114,33 @@ namespace Player
             }
             if (_jumpPressed)
             {
-                if (_canJump && _isSliding && !_isGrounded)
+                var toJump = false;
+                if (!_wasJumpPressed && _isSliding && !_isGrounded)
                 {
                     velocity.x += wallJumpXForce * (_isSlidingRight ? -1 : 1);
-                    velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * jumpHeight);
+                    toJump = true;
                 }
 
-                else if (_canJump && (_isGrounded || _remainingAirJumps > 0))
+                else if (!_wasJumpPressed && (_isGrounded || _remainingAirJumps > 0))
                 {
-                    velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * jumpHeight);
+                    toJump = true;
                     if (!_isGrounded) {_remainingAirJumps--;}
                     _isGrounded = false;
                 }
-            
-                _canJump = false;
+
+                if (toJump)
+                {
+                    velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * minJumpHeight);
+                }
+                
+                _wasJumpPressed = true;
             }
             else
             {
-                _canJump = true;
+                _wasJumpPressed = false;
             }
         }
-    
+        
         private void HandleMoveHorizontal(ref Vector2 velocity)
         {
             velocity.x *= 1-horizontalDrag;
