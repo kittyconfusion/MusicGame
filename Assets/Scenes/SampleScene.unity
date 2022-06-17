@@ -690,9 +690,13 @@ MonoBehaviour:
   walkingSpeed: 10
   horizontalDrag: 0.1
   walkSmoothing: 0.075
-  jumpHeight: 2.5
+  minJumpHeight: 2.5
+  maxJumpHeight: 2.5
+  maxJumpTime: 0.5
   numAirJumps: 1
   wallJumpXForce: 15
+  coyoteBufferTicks: 5
+  jumpBufferTicks: 5
   groundCheckPos: {fileID: 1448532718}
   wallCheckLeftPos: {fileID: 2093715736}
   wallCheckRightPos: {fileID: 1908902561}

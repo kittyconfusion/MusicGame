@@ -15,9 +15,10 @@ namespace Player
         public int numAirJumps = 1;
         public int wallJumpXForce = 10;
 
-        public int coyoteTicks = 5;
+        public int coyoteBufferTicks = 5;
+        private int _coyoteBuffer = 0;
         public int jumpBufferTicks = 5;
-        public int _jumpBuffer = 0;
+        private int _jumpBuffer = 0;
 
         public Transform groundCheckPos;
         public Transform wallCheckLeftPos;
@@ -89,6 +90,9 @@ namespace Player
         private void CheckGrounded()
         {
             _isGrounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0, groundLayers);
+            
+            if (_isGrounded) { _coyoteBuffer = coyoteBufferTicks; }
+            else if (_coyoteBuffer > 0) { _coyoteBuffer--; }
         }
 
         private void CheckWallSliding()
@@ -143,11 +147,12 @@ namespace Player
                     toJump = true;
                 }
 
-                else if (!_wasJumpPressed && (_isGrounded || _remainingAirJumps > 0))
+                else if (!_wasJumpPressed && (_isGrounded || _remainingAirJumps > 0 || _coyoteBuffer > 0))
                 {
                     toJump = true;
-                    if (!_isGrounded) {_remainingAirJumps--;}
+                    if (!_isGrounded && _coyoteBuffer == 0) {_remainingAirJumps--;}
                     _isGrounded = false;
+                    _coyoteBuffer = 0;
                 }
 
                 if (toJump)
