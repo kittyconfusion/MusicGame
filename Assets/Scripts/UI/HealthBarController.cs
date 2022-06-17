@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,9 +11,9 @@ public class HealthBarController : MonoBehaviour
     public Sprite previewSprite;
     public Sprite emptySprite;
     public float spriteSize = 25;
-    public float spacing = 4;
-    public float spriteStartX = 417;
-    public float barY = 176;
+    public float spacing = 3;
+    public float spacingFromRight = 4;
+    public float spacingFromTop = 4;
     public int healthPerSprite = 5;
     public float changeSmoothing = 0.5f;
 
@@ -77,19 +78,8 @@ public class HealthBarController : MonoBehaviour
 
     private void AddSprite(int idx)
     {
-        /*GameObject emptyObj = new GameObject();
-        Image emptyImage = emptyObj.AddComponent<Image>();
-        RectTransform emptyTransform = emptyObj.GetComponent<RectTransform>();
-
-        emptyTransform.SetParent(transform, true);
-        emptyObj.name = "Empty Health";
-        emptyImage.sprite = emptySprite;
-        emptyTransform.sizeDelta = new Vector2(spriteSize, spriteSize);
-        emptyTransform.localScale = Vector3.one;
-        emptyTransform.localPosition = new Vector3(spriteStartX - (spacing + spriteSize) * idx, barY, 0);*/
-
         Image empty = CreateSprite(emptySprite, transform, 1,
-            new Vector3(spriteStartX - (spacing + spriteSize) * idx, barY, 0));
+            new Vector3(Screen.width/2 - (spacingFromRight + spriteSize/2) - (spacing + spriteSize) * idx, Screen.height/2 - (spacingFromTop + spriteSize/2), 0));
 
         Image preview = CreateSprite(previewSprite, empty.transform, 0, Vector3.zero);
         _previewSprites.Add(preview);

@@ -172,9 +172,9 @@ MonoBehaviour:
   previewSprite: {fileID: 21300000, guid: fa11f1ac08a25654d82a230f4e24fa4e, type: 3}
   emptySprite: {fileID: 21300000, guid: be0987bb9f5840542b48a2a862678bc4, type: 3}
   spriteSize: 25
-  spacing: 4
-  spriteStartX: 417
-  barY: 176
+  spacing: 3
+  spacingFromRight: 4
+  spacingFromTop: 4
   healthPerSprite: 5
   changeSmoothing: 0.5
 --- !u!1 &519420028
