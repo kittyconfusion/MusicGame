@@ -186,7 +186,7 @@ namespace Player
         {
             // TODO: make this use acceleration and stuff
             
-            velocity.x *= 1-horizontalDrag;
+            velocity.x *= 1 - horizontalDrag;
             var inputMovement = _directionalInput.x * walkingSpeed * (_isGrounded ? 1 : airSpeedScale);
             float targetMovement;
             if (inputMovement * velocity.x > 0)

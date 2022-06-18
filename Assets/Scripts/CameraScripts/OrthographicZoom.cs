@@ -4,13 +4,13 @@ namespace CameraScripts
 {
     public class OrthographicZoom : MonoBehaviour
     {
-        private UnityEngine.Camera _cam;
+        private Camera _cam;
         public float minZoom = 7;
         public float maxZoom = 9;
         public float speedThreshold = 7.5f;
         public float smooothness = 0.5f;
         public Rigidbody2D followBody;
-        private float _zooooomSpeed = 0;
+        private float _zooooomSpeed;
 
         private void Awake()
         {
