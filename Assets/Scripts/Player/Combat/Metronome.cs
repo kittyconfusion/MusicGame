@@ -21,7 +21,7 @@ namespace Player.Combat
 
         void FixedUpdate()
         {
-            if (inCombat)
+            if (inCombat && Time.fixedUnscaledDeltaTime != 0 && tempo != 0)
             {
                 if (_framesInCombat++ % Mathf.RoundToInt(60 / Time.fixedUnscaledDeltaTime / tempo) == 0)
                 {

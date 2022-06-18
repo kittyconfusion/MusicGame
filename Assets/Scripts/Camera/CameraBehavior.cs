@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CameraBehavior : MonoBehaviour
 {
-    private Camera _cam;
+    private UnityEngine.Camera _cam;
     private int _layermask;
     public Rigidbody2D player;
     public Vector2 offset = new(0,0);
@@ -14,7 +14,7 @@ public class CameraBehavior : MonoBehaviour
 
     private void Awake()
     {
-        _cam = GetComponent<Camera>();
+        _cam = GetComponent<UnityEngine.Camera>();
         _layermask = LayerMask.GetMask("Camera Collider");
     }
     void Update()
