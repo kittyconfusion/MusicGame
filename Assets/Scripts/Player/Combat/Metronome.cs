@@ -21,9 +21,10 @@ namespace Player.Combat
 
         void FixedUpdate()
         {
-            if (inCombat && Time.fixedUnscaledDeltaTime != 0 && tempo != 0)
+            int framesPerBeat = Mathf.RoundToInt(60 / Time.fixedUnscaledDeltaTime / tempo);
+            if (inCombat && framesPerBeat != 0)
             {
-                if (_framesInCombat++ % Mathf.RoundToInt(60 / Time.fixedUnscaledDeltaTime / tempo) == 0)
+                if (_framesInCombat++ %  framesPerBeat == 0)
                 {
                     Beat();
                 }
