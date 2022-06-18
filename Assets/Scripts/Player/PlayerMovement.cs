@@ -7,18 +7,18 @@ namespace Player
     {
     
         public float walkingSpeed = 5;
+        public float airSpeedScale = 0.8f;
         public float horizontalDrag = 0.1f;
         public float walkSmoothing = 0.2f;
         public float minJumpHeight = 1f;
         public float maxJumpHeight = 2.5f;
-        public float maxJumpTime = 0.5f;
         public int numAirJumps = 1;
         public int wallJumpXForce = 10;
 
         public int coyoteBufferTicks = 5;
-        private int _coyoteBuffer = 0;
+        private int _coyoteBuffer;
         public int jumpBufferTicks = 5;
-        private int _jumpBuffer = 0;
+        private int _jumpBuffer;
 
         public Transform groundCheckPos;
         public Transform wallCheckLeftPos;
@@ -33,21 +33,18 @@ namespace Player
         private Vector2 _horizontalAcceleration = Vector2.zero;
 
         private bool _jumpPressed;
-        private float _jumpTime;
+        private bool _isJumping;
         private int _remainingAirJumps;
         private bool _wasJumpPressed;
         private bool _isGrounded;
         private bool _isSliding;
         private bool _isSlidingRight;
 
-        public float fallingGravityScale;
-        private float _baseGravity;
         private float _gravity;
 
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-            _baseGravity = _rigidbody.gravityScale;
         }
 
         void Update()
@@ -76,10 +73,10 @@ namespace Player
         // Sets gravity to 0 whilst on ground as to not slide down ramps and remove friction (handled separately).
         private void HandleGravity(ref Vector2 velocity)
         {
-            _gravity = _isGrounded ? 0 : _baseGravity;
-            _gravity *= (velocity.y < 0 && !_isSliding) ? fallingGravityScale : 1;
-
-            _rigidbody.gravityScale = _gravity;
+            
+            _gravity = _rigidbody.gravityScale > 0 ? _rigidbody.gravityScale : _gravity;
+            
+            _rigidbody.gravityScale = _isGrounded ? 0 : _gravity;
 
         }
 
@@ -123,52 +120,86 @@ namespace Player
                 _jumpBuffer = jumpBufferTicks;
                 
             }
+
+            if (velocity.y <= 0)
+            {
+                _isJumping = false;
+            }
+            
+            
             if (_jumpBuffer > 0)
             {
                 if (_isGrounded || _isSliding)
                 {
+                    _wasJumpPressed = false;
                     _jumpPressed = true;
                     _jumpBuffer = 0;
                 }
-                _wasJumpPressed = false;
                 _jumpBuffer--;
             }
 
             if (_jumpPressed)
             {
-                var toJump = false;
-                if (!_wasJumpPressed && _isSliding && !_isGrounded)
+                if (_isJumping)
                 {
-                    velocity.x += wallJumpXForce * (_isSlidingRight ? -1 : 1);
-                    toJump = true;
+                    velocity.y += Time.deltaTime * (Physics2D.gravity.y * _gravity) * (minJumpHeight/maxJumpHeight - 1);
+                }
+                else if (!_wasJumpPressed)
+                {
+                    var toJump = false;
+
+                    if (!_wasJumpPressed && _isSliding && !_isGrounded)
+                    {
+                        velocity.x += wallJumpXForce * (_isSlidingRight ? -1 : 1);
+                        toJump = true;
+                    }
+
+                    else if (!_wasJumpPressed && (_isGrounded || _remainingAirJumps > 0 || _coyoteBuffer > 0))
+                    {
+                        toJump = true;
+                        if (!_isGrounded && _coyoteBuffer == 0)
+                        {
+                            _remainingAirJumps--;
+                        }
+
+                        _isGrounded = false;
+                        _coyoteBuffer = 0;
+                    }
+
+                    if (toJump)
+                    {
+                        velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * minJumpHeight);
+                        _isJumping = true;
+                    }
                 }
 
-                else if (!_wasJumpPressed && (_isGrounded || _remainingAirJumps > 0 || _coyoteBuffer > 0))
-                {
-                    toJump = true;
-                    if (!_isGrounded && _coyoteBuffer == 0) {_remainingAirJumps--;}
-                    _isGrounded = false;
-                    _coyoteBuffer = 0;
-                }
-
-                if (toJump)
-                {
-                    velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _baseGravity * minJumpHeight);
-                }
-                
                 _wasJumpPressed = true;
             }
             else
             {
                 _wasJumpPressed = false;
+                _isJumping = false;
             }
         }
         
         private void HandleMoveHorizontal(ref Vector2 velocity)
         {
+            // TODO: make this use acceleration and stuff
+            
             velocity.x *= 1-horizontalDrag;
-            var inputMovement = _directionalInput.x * walkingSpeed;
-            float targetMovement = inputMovement * velocity.x > 0 ? (Math.Abs(inputMovement) >= Math.Abs(velocity.x) ? inputMovement : velocity.x) : (velocity.x + inputMovement);
+            var inputMovement = _directionalInput.x * walkingSpeed * (_isGrounded ? 1 : airSpeedScale);
+            float targetMovement;
+            if (inputMovement * velocity.x > 0)
+            {
+                // If moving in same direction as existing motion, take whichever value is bigger
+                targetMovement = Math.Abs(inputMovement) >= Math.Abs(velocity.x) ? inputMovement : velocity.x;
+            }
+            else
+            {
+                // If moving in opposite direction as existing motion, just add
+                targetMovement = velocity.x + inputMovement;
+            }
+
             velocity.x = Vector2.SmoothDamp(velocity,new Vector2(targetMovement,velocity.y),ref _horizontalAcceleration,walkSmoothing).x;
         }
     }

@@ -11,26 +11,27 @@ namespace Player.Combat
         
         private readonly HashSet<IMetronomeListener> _listeners = new();
         private AudioSource _audioSource;
-        private int _framesInCombat;
-        private int _framesPerBeat;
+        private float _timeSinceLastBeat;
 
         void Start()
         {
             _audioSource = gameObject.GetComponent<AudioSource>();
         }
 
-        void FixedUpdate()
+        void Update()
         {
-            if (inCombat && Time.fixedUnscaledDeltaTime != 0 && tempo != 0)
+            if (inCombat && Time.deltaTime != 0 && tempo != 0)
             {
-                if (_framesInCombat++ % Mathf.RoundToInt(60 / Time.fixedUnscaledDeltaTime / tempo) == 0)
+                _timeSinceLastBeat += Time.deltaTime;
+                if (_timeSinceLastBeat >= 60f/tempo)
                 {
+                    _timeSinceLastBeat -= 60f / tempo;
                     Beat();
                 }
             }
             else
             {
-                _framesInCombat = 0;
+                _timeSinceLastBeat = 0;
             }
         }
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Camera
+namespace CameraScripts
 {
     public class OrthographicZoom : MonoBehaviour
     {

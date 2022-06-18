@@ -767,14 +767,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkingSpeed: 10
-  horizontalDrag: 0.1
+  airSpeedScale: 0.8
+  horizontalDrag: 0.2
   walkSmoothing: 0.075
-  minJumpHeight: 2.5
+  minJumpHeight: 1.2
   maxJumpHeight: 2.5
-  maxJumpTime: 0.5
   numAirJumps: 1
   wallJumpXForce: 15
-  coyoteBufferTicks: 6
+  coyoteBufferTicks: 5
   jumpBufferTicks: 5
   groundCheckPos: {fileID: 1448532718}
   wallCheckLeftPos: {fileID: 2093715736}
@@ -782,7 +782,6 @@ MonoBehaviour:
   groundLayers:
     serializedVersion: 2
     m_Bits: 1
-  fallingGravityScale: 1.2
 --- !u!212 &907287236
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -865,7 +864,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0.1
+  m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 3
   m_Material: {fileID: 0}
@@ -1712,6 +1711,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -6, y: -13, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 1
+      m_TileSpriteIndex: 4
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: 4, y: -13, z: 0}
     second:
       serializedVersion: 2
@@ -2103,6 +2112,16 @@ Tilemap:
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
   - first: {x: 51, y: -13, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 1
+      m_TileSpriteIndex: 4
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -6, y: -12, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 1
@@ -4996,7 +5015,7 @@ Tilemap:
   m_TileAssetArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 354
+  - m_RefCount: 356
     m_Data: {fileID: 11400000, guid: 3f8bf39974e71814a97b2e544e1213ae, type: 2}
   - m_RefCount: 12
     m_Data: {fileID: 11400000, guid: dcef7f9fac247c54bbb7af32ce9c9a49, type: 2}
@@ -5013,10 +5032,10 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: 3d9552ffefd241a49bf869676fd98973, type: 3}
   - m_RefCount: 13
     m_Data: {fileID: 21300000, guid: d8d23ccab8024b14db952f27bd188538, type: 3}
-  - m_RefCount: 354
+  - m_RefCount: 356
     m_Data: {fileID: 21300000, guid: f535bc55487299643b43bae86d997be4, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 386
+  - m_RefCount: 388
     m_Data:
       e00: 1
       e01: 0
@@ -5035,7 +5054,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 386
+  - m_RefCount: 388
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -5185,7 +5204,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 37fa55c4a9419e940b961600563e9ce9, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.73
   m_Pitch: 1
   Loop: 0
   Mute: 0
