@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Player
@@ -5,7 +6,8 @@ namespace Player
     public class PlayerStats : MonoBehaviour
     {
 
-        public int maxHealthStart = 50;
+        public int maxHealth = 50;
+        public Scale scale = Scale.Major;
 
         private int _maxHealth;
         public int MaxHealth
@@ -28,8 +30,8 @@ namespace Player
             get => _health;
             set => _health = Mathf.Clamp(value, 0, MaxHealth);
         }
-    
-    
+
+
         // TODO TESTING VARS, REMOVE
         public bool setMaxHealth;
         public bool setHealth;
@@ -38,7 +40,7 @@ namespace Player
     
         void Start()
         {
-            MaxHealth = maxHealthStart;
+            MaxHealth = maxHealth;
         }
 
         void Update()
@@ -68,5 +70,10 @@ namespace Player
         {
             return MaxHealth;
         }
+    }
+
+    public enum Scale
+    {
+        Major
     }
 }
