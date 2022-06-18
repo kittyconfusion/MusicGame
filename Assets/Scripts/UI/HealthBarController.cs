@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
@@ -27,18 +26,18 @@ namespace UI
         private float _currHealthF;
 
         private Vector2 _resolution;
+        private Camera _camera;
 
         private void Start()
         {
-            UnityEngine.Camera camera = UnityEngine.Camera.main;
-            _resolution = new Vector2(camera.scaledPixelWidth, camera.scaledPixelHeight);
+            _camera = Camera.main;
+            _resolution = new Vector2(_camera.scaledPixelWidth, _camera.scaledPixelHeight);
         }
 
         // Update is called once per frame
         void Update()
         {
-            UnityEngine.Camera camera = UnityEngine.Camera.main;
-            Vector2 resolution = new Vector2(camera.scaledPixelWidth, camera.scaledPixelHeight);
+            Vector2 resolution = new Vector2(_camera.scaledPixelWidth, _camera.scaledPixelHeight);
             if (!resolution.Equals(_resolution))
             {
                 _resolution = resolution;
