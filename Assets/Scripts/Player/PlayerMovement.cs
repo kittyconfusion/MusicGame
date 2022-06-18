@@ -40,12 +40,14 @@ namespace Player
         private bool _isSliding;
         private bool _isSlidingRight;
 
+        public float fallingGravityScale;
+        private float _baseGravity;
         private float _gravity;
 
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-            _gravity = _rigidbody.gravityScale;
+            _baseGravity = _rigidbody.gravityScale;
         }
 
         void Update()
@@ -66,25 +68,19 @@ namespace Player
             CheckWallSliding();
             HandleJump(ref velocity);
 
-            HandleGravity();
+            HandleGravity(ref velocity);
             
             _rigidbody.velocity = velocity;
         }
         
         // Sets gravity to 0 whilst on ground as to not slide down ramps and remove friction (handled separately).
-        private void HandleGravity()
+        private void HandleGravity(ref Vector2 velocity)
         {
-            _gravity = _rigidbody.gravityScale > 0 ? _rigidbody.gravityScale : _gravity;
+            _gravity = _isGrounded ? 0 : _baseGravity;
+            _gravity *= (velocity.y < 0 && !_isSliding) ? fallingGravityScale : 1;
 
-            if (!_isGrounded && _rigidbody.gravityScale == 0)
-            {
-                _rigidbody.gravityScale = _gravity;
-            }
-            
-            if (_isGrounded && _rigidbody.gravityScale > 0)
-            {
-                _rigidbody.gravityScale = 0;
-            }
+            _rigidbody.gravityScale = _gravity;
+
         }
 
         private void CheckGrounded()
@@ -157,7 +153,7 @@ namespace Player
 
                 if (toJump)
                 {
-                    velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _gravity * minJumpHeight);
+                    velocity.y = Mathf.Sqrt(2 * -Physics2D.gravity.y * _baseGravity * minJumpHeight);
                 }
                 
                 _wasJumpPressed = true;
