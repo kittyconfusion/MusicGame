@@ -20,7 +20,7 @@ namespace CameraScripts
         void Update()
         {
             var targetZoom = minZoom + (maxZoom - minZoom) / (1 + Mathf.Exp(-0.5f * (followBody.velocity.magnitude - speedThreshold)));
-            float newSize = Mathf.SmoothDamp(_cam.orthographicSize, targetZoom, ref _zooooomSpeed, smooothness, Mathf.Infinity,(targetZoom < _cam.orthographicSize ? 2 : 1) * Time.deltaTime);
+            float newSize = Mathf.SmoothDamp(_cam.orthographicSize, targetZoom, ref _zooooomSpeed, smooothness, Mathf.Infinity, (targetZoom < _cam.orthographicSize ? 2 : 1) * Time.deltaTime);
             _cam.orthographicSize = newSize;
         }
     }

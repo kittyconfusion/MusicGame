@@ -23,7 +23,7 @@ namespace Player.Combat
             if (inCombat && Time.deltaTime != 0 && tempo != 0)
             {
                 _timeSinceLastBeat += Time.deltaTime;
-                if (_timeSinceLastBeat >= 60f/tempo)
+                if (_timeSinceLastBeat >= 60f / tempo)
                 {
                     _timeSinceLastBeat -= 60f / tempo;
                     Beat();

@@ -92,7 +92,7 @@ namespace UI
                         continue;
                     }
                 
-                    sprites[i].fillAmount = Mathf.Clamp01((float) health/healthPerSprite - i);
+                    sprites[i].fillAmount = Mathf.Clamp01((float) health / healthPerSprite - i);
                 }
             }
 

@@ -49,7 +49,6 @@ namespace Player
 
         void Update()
         {
-
             _jumpPressed = Input.GetAxis("Jump") > 0;
             _directionalInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
@@ -73,24 +72,22 @@ namespace Player
         // Sets gravity to 0 whilst on ground as to not slide down ramps and remove friction (handled separately).
         private void HandleGravity(ref Vector2 velocity)
         {
-            
             _gravity = _rigidbody.gravityScale > 0 ? _rigidbody.gravityScale : _gravity;
             
             _rigidbody.gravityScale = _isGrounded ? 0 : _gravity;
-
         }
 
         private void CheckGrounded()
         {
             _isGrounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0, groundLayers);
             
-            if (_isGrounded) { _coyoteBuffer = coyoteBufferTicks; }
-            else if (_coyoteBuffer > 0) { _coyoteBuffer--; }
+            if (_isGrounded) _coyoteBuffer = coyoteBufferTicks;
+            else if (_coyoteBuffer > 0) _coyoteBuffer--;
         }
 
         private void CheckWallSliding()
         {
-            if (Physics2D.OverlapBox(wallCheckLeftPos.position,wallCheckSize, 0, groundLayers) && _directionalInput.x < 0)
+            if (Physics2D.OverlapBox(wallCheckLeftPos.position, wallCheckSize, 0, groundLayers) && _directionalInput.x < 0)
             {
                 _isSliding = true;
                 _isSlidingRight = false;
@@ -104,28 +101,16 @@ namespace Player
             {
                 _isSliding = false;
             }
-
         }
 
         private void HandleJump(ref Vector2 velocity)
         {
 
-            if (_isGrounded)
-            {
-                _remainingAirJumps = numAirJumps;
-            }
+            if (_isGrounded) _remainingAirJumps = numAirJumps;
 
-            if (!_isGrounded && _remainingAirJumps == 0 && _jumpPressed && !_wasJumpPressed)
-            {
-                _jumpBuffer = jumpBufferTicks;
-                
-            }
+            if (!_isGrounded && _remainingAirJumps == 0 && _jumpPressed && !_wasJumpPressed) _jumpBuffer = jumpBufferTicks;
 
-            if (velocity.y <= 0)
-            {
-                _isJumping = false;
-            }
-            
+            if (velocity.y <= 0) _isJumping = false;
             
             if (_jumpBuffer > 0)
             {
@@ -142,7 +127,7 @@ namespace Player
             {
                 if (_isJumping)
                 {
-                    velocity.y += Time.deltaTime * (Physics2D.gravity.y * _gravity) * (minJumpHeight/maxJumpHeight - 1);
+                    velocity.y += Time.deltaTime * (Physics2D.gravity.y * _gravity) * (minJumpHeight / maxJumpHeight - 1);
                 }
                 else if (!_wasJumpPressed)
                 {
@@ -186,7 +171,7 @@ namespace Player
         {
             // TODO: make this use acceleration and stuff
             
-            velocity.x *= 1-horizontalDrag;
+            velocity.x *= 1 - horizontalDrag;
             var inputMovement = _directionalInput.x * walkingSpeed * (_isGrounded ? 1 : airSpeedScale);
             float targetMovement;
             if (inputMovement * velocity.x > 0)
@@ -200,7 +185,7 @@ namespace Player
                 targetMovement = velocity.x + inputMovement;
             }
 
-            velocity.x = Vector2.SmoothDamp(velocity,new Vector2(targetMovement,velocity.y),ref _horizontalAcceleration,walkSmoothing).x;
+            velocity.x = Vector2.SmoothDamp(velocity, new Vector2(targetMovement, velocity.y), ref _horizontalAcceleration, walkSmoothing).x;
         }
     }
 }
