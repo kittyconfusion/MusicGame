@@ -172,9 +172,13 @@ namespace Player
             // TODO: make this use acceleration and stuff
             
             velocity.x *= 1 - horizontalDrag;
-            var inputMovement = _directionalInput.x * walkingSpeed * (_isGrounded ? 1 : airSpeedScale);
+            
+            float inputMovement = _directionalInput.x * walkingSpeed;
+            bool movingInSameDirectionAsMotion = inputMovement * velocity.x > 0;
+            inputMovement *= (!_isGrounded && !movingInSameDirectionAsMotion) ? airSpeedScale : 1;
+
             float targetMovement;
-            if (inputMovement * velocity.x > 0)
+            if (movingInSameDirectionAsMotion)
             {
                 // If moving in same direction as existing motion, take whichever value is bigger
                 targetMovement = Math.Abs(inputMovement) >= Math.Abs(velocity.x) ? inputMovement : velocity.x;
